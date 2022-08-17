@@ -3,9 +3,10 @@
 ## Summary
 There are currently two different ROS packages in the repository. These packages are used on Hello Robot Stretch along with the stretch_ros repository 
 
-//
-The stretch_ros repository can be found here: https://github.com/hello-robot/stretch_ros.git
-//
+The stretch_ros repository can be found here:
+```bash
+https://github.com/hello-robot/stretch_ros.git
+```
 
 ## stretch_robot_client_interface_pkg
 The purpose of this package is to contain all the needed files for the client interface.
