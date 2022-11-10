@@ -128,13 +128,13 @@
     var warning_topic = new ROSLIB.Topic({
         ros : ros,
         name : '/client_warning',
-        messageType : 'std_msgs/String'
+        messageType : ''
     });//to publish warnings while operating
 
     var command_topic = new ROSLIB.Topic({
         ros : ros,
         name : '/client_command',
-        messageType : 'std_msgs/String'
+        messageType : ''
     });//to publish commands while operating
 
     // Subscribers
@@ -151,14 +151,16 @@
     
     clear_msgs = function(){
         var str = new ROSLIB.Message({
-            data: ''
+            data: '';
+            time: '';
         });
         warning_topic.publish(str);
     }
 
     publish_msgs = function(msg){
         var str= new ROSLIB.Message({
-            data: String(msg)
+            data: String(msg);
+            time: Int32();
         });
         command_topic.publish(str);
     }

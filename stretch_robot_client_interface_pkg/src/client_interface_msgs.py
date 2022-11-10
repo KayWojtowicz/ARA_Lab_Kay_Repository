@@ -3,6 +3,7 @@
 import rospy
 from std_msgs.msg import * # imports all std_msgs
 from geometry_msgs.msg import Twist # needed to move the base
+from client_custom_msgs.msg import 
 
 import actionlib
 
@@ -24,27 +25,28 @@ def subscriber_callback(given_string) :
     message = given_string.data
     
     if 'position' in message :
-        move_position(message)
+        move_position(given_string)
 
     elif 'base' in message :
-        move_base(message)
+        move_base(given_string)
         
     elif 'arm' in message :
-        move_arm(message)
+        move_arm(given_string)
         
     elif 'lift' in message :
-        move_lift(message)
+        move_lift(given_string)
         
     elif 'gripper' in message :
-        move_gripper(message)
+        move_gripper(given_string)
 
     elif 'wrist' in message :
-        move_wrist(message)
+        move_wrist(given_string)
     
         
 #####################################################################################
-
-def move_position(message)
+#needs work!!!!
+def move_position(given_string) :
+    message = given_string.data
     point = JointTrajectoryPoint()
     point.time_from_start = rospy.Duration(0.1)
     trajectory_goal = FollowJointTrajectoryGoal()
@@ -53,7 +55,7 @@ def move_position(message)
     if 'arm' in message:
         if 'stow' in message :
             trajectory_goal.trajectory.joint_names = ['joint_lift', 'joint_arm_l0','joint_arm_l1', 'joint_arm_l2', 'joint_arm_l3', 'joint_wrist_yaw']
-            point.positions[0.5, 0, 0, 0, 0, 0]
+            
             endclient = arm_trajectoryClient
 
         elif 'home' in message :
@@ -61,9 +63,9 @@ def move_position(message)
             point.positions[0.5, 0.2, 0.2, 0.2, 0.2, 10]
             endclient = arm_trajectoryClient
             
-    elif 'base' in message :
-        if 'forward' in message :
-            
+    #elif 'base' in message :
+        #if 'forward' in message :
+
 
     trajectory_goal.trajectory.points = [point]
     trajectory_goal.trajectory.header.stamp = rospy.Time.now() + rospy.Duration(0.1)
@@ -72,11 +74,38 @@ def move_position(message)
 
 #####################################################################################
 
-def move_base(message) :
-    endclient = base_trajectoryClient
+def move_base(given_string) :
+    message = given_string.data
+    base_movement = Twist()
+    
+    if 'degrees' in message :
+        time = given_string.time
+        rate = rospy.Rate(time)
+        base_pub.publish(base_movement)
+        rate.sleep()
+
+    elif 'forward' in message :
+        base_movement.linear.x = 1
+        base_movement.angular.z = 0
+        
+    elif 'backwards' in message :
+        base_movement.linear.x = -1
+        base_movement.angular.z = 0
+        
+    elif 'left' in message :
+        base_movement.linear.x = 0
+        base_movement.angular.z = 1
+        
+    elif 'right' in message :
+        base_movement.linear.x = 0
+        base_movement.angular.z = -1
+    
+    base_pub.publish(base_movement)
+
+    '''endclient = base_trajectoryClient
 
     if 'degrees' in message :
-        command = {'joint': '', 'position': }
+        command = {'joint': '', 'delta': 6}
 
     if 'forward' in message :
         command = {'joint': 'total_base', 'delta': 0.1}
@@ -90,11 +119,12 @@ def move_base(message) :
     elif 'right' in message :
         command = {'joint': 'right_wheel', 'delta': 0.1}
 
-    send_command(endclient, command)
+    send_command(endclient, command)'''
 
 #####################################################################################
 
-def move_arm(message) :
+def move_arm(given_string) :
+    message = given_string.data
     endclient = arm_trajectoryClient
 
     if 'extend' in message :
@@ -107,7 +137,8 @@ def move_arm(message) :
 
 #####################################################################################
 
-def move_lift(message) :
+def move_lift(given_string) :
+    message = given_string.data
     endclient = arm_trajectoryClient
     
     if 'up' in message :
@@ -119,7 +150,8 @@ def move_lift(message) :
     
 #####################################################################################
 
-def move_gripper(message) :
+def move_gripper(given_string) :
+    message = given_string.data
     endclient = gripper_trajectoryClient
 
     if 'open' in message :
@@ -131,7 +163,8 @@ def move_gripper(message) :
 
 #####################################################################################
 
-def move_wrist(message) :
+def move_wrist(given_string) :
+    message = given_string.data
     endclient = arm_trajectoryClient
 
     if 'left' in message :
@@ -162,13 +195,11 @@ def send_command(endclient, command) :
             delta = command['delta']
             new_value = joint_value + delta
             point.positions = [new_value]
-        elif joint_name in ["joint_gripper", "wrist_extension", 'total_base']:
+        elif joint_name in ["joint_gripper", "wrist_extension"]:
             if joint_name == "joint_gripper" :
                 trajectory_goal.trajectory.joint_names = ['joint_gripper_finger_left', 'joint_gripper_finger_right']
-            elif joint_name == 'wrist_extension' :
+            else:
                 trajectory_goal.trajectory.joint_names = ['joint_arm_l0','joint_arm_l1', 'joint_arm_l2', 'joint_arm_l3']
-            elif jointname == 'total_base' :
-                trajectory_goal.trajectory.joint_names = ['left_wheel', 'right_wheel']
             positions = []
             for j_name in trajectory_goal.trajectory.joint_names:
                 joint_index = joint_state.name.index(j_name)
@@ -197,6 +228,6 @@ if __name__ == "__main__":
     joint_state_sub = rospy.Subscriber('/joints', JointState, joint_states_callback) #subscribes to joint state topic
     arm_trajectoryClient = actionlib.ActionClient('/arm_AC', FollowJointTrajectoryAction) #allows for goals to be sent to the arm
     gripper_trajectoryClient = actionlib.ActionClient('/gripper_AC', FollowJointTrajectoryAction) #allows for goals to be sent to the gripper
-    base_trajectoryClient = actionlib.ActionClient('/base_AC', FollowJointTrajectoryAction) #allows for goals to be sent to the base
+    #base_trajectoryClient = actionlib.ActionClient('/base_AC', FollowJointTrajectoryAction) #allows for goals to be sent to the base
 
     rospy.spin()
