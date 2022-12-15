@@ -22,7 +22,7 @@ def joint_states_callback(joint_state_msg) :
 #####################################################################################
 
 def subscriber_callback(given_string) :
-    message = given_string.data
+    message = given_string.command
     
     if 'position' in message :
         move_position(given_string)
@@ -46,7 +46,7 @@ def subscriber_callback(given_string) :
 #####################################################################################
 #needs work!!!!
 def move_position(given_string) :
-    message = given_string.data
+    message = given_string.command
     point = JointTrajectoryPoint()
     point.time_from_start = rospy.Duration(0.1)
     trajectory_goal = FollowJointTrajectoryGoal()
@@ -75,14 +75,11 @@ def move_position(given_string) :
 #####################################################################################
 
 def move_base(given_string) :
-    message = given_string.data
+    message = given_string.command
     base_movement = Twist()
     
     if 'degrees' in message :
-        time = given_string.time
-        rate = rospy.Rate(time)
-        base_pub.publish(base_movement)
-        rate.sleep()
+        time = given_string.value
 
     elif 'forward' in message :
         base_movement.linear.x = 1
@@ -102,29 +99,10 @@ def move_base(given_string) :
     
     base_pub.publish(base_movement)
 
-    '''endclient = base_trajectoryClient
-
-    if 'degrees' in message :
-        command = {'joint': '', 'delta': 6}
-
-    if 'forward' in message :
-        command = {'joint': 'total_base', 'delta': 0.1}
-
-    elif 'backwards' in message :
-        command = {'joint': 'total_base', 'delta': -0.1}
-        
-    elif 'left' in message :
-        command = {'joint': 'left_wheel', 'delta': 0.1}
-
-    elif 'right' in message :
-        command = {'joint': 'right_wheel', 'delta': 0.1}
-
-    send_command(endclient, command)'''
-
 #####################################################################################
 
 def move_arm(given_string) :
-    message = given_string.data
+    message = given_string.command
     endclient = arm_trajectoryClient
 
     if 'extend' in message :
@@ -138,7 +116,7 @@ def move_arm(given_string) :
 #####################################################################################
 
 def move_lift(given_string) :
-    message = given_string.data
+    message = given_string.command
     endclient = arm_trajectoryClient
     
     if 'up' in message :
@@ -151,20 +129,20 @@ def move_lift(given_string) :
 #####################################################################################
 
 def move_gripper(given_string) :
-    message = given_string.data
+    message = given_string.command
     endclient = gripper_trajectoryClient
 
     if 'open' in message :
-        command = {'joint': 'joint_gripper', 'delta': 0.1}
+        command = {'joint': 'joint_gripper_finger_right', 'delta': 0.1}
     elif 'close' in message :
-        command = {'joint': 'joint_gripper', 'delta': -0.1}
+        command = {'joint': 'joint_gripper_finger_right', 'delta': -0.1}
     
     send_command(endclient, command)
 
 #####################################################################################
 
 def move_wrist(given_string) :
-    message = given_string.data
+    message = given_string.command
     endclient = arm_trajectoryClient
 
     if 'left' in message :
@@ -195,10 +173,7 @@ def send_command(endclient, command) :
             delta = command['delta']
             new_value = joint_value + delta
             point.positions = [new_value]
-        elif joint_name in ["joint_gripper", "wrist_extension"]:
-            if joint_name == "joint_gripper" :
-                trajectory_goal.trajectory.joint_names = ['joint_gripper_finger_left', 'joint_gripper_finger_right']
-            else:
+        elif joint_name in ["wrist_extension"]:
                 trajectory_goal.trajectory.joint_names = ['joint_arm_l0','joint_arm_l1', 'joint_arm_l2', 'joint_arm_l3']
             positions = []
             for j_name in trajectory_goal.trajectory.joint_names:
