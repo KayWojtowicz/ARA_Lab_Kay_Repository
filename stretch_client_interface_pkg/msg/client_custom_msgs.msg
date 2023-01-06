@@ -1,3 +1,2 @@
-String command
-Int value
----
+string command
+int32 value

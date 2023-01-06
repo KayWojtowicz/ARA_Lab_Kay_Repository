@@ -1,9 +1,9 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 import rospy
 from std_msgs.msg import * # imports all std_msgs
 from geometry_msgs.msg import Twist # needed to move the base
-from client_custom_msgs.msg import 
+from client_custom_msgs.msg import * # imports everything from the custom msgs created
 
 import actionlib
 
@@ -45,7 +45,7 @@ def subscriber_callback(given_string) :
         
 #####################################################################################
 #needs work!!!!
-def move_position(given_string) :
+def move_position(given_string) : 
     message = given_string.command
     point = JointTrajectoryPoint()
     point.time_from_start = rospy.Duration(0.1)
@@ -55,7 +55,7 @@ def move_position(given_string) :
     if 'arm' in message:
         if 'stow' in message :
             trajectory_goal.trajectory.joint_names = ['joint_lift', 'joint_arm_l0','joint_arm_l1', 'joint_arm_l2', 'joint_arm_l3', 'joint_wrist_yaw']
-            
+            point.positions[0,0,0,0,0,0]
             endclient = arm_trajectoryClient
 
         elif 'home' in message :
@@ -63,9 +63,6 @@ def move_position(given_string) :
             point.positions[0.5, 0.2, 0.2, 0.2, 0.2, 10]
             endclient = arm_trajectoryClient
             
-    #elif 'base' in message :
-        #if 'forward' in message :
-
 
     trajectory_goal.trajectory.points = [point]
     trajectory_goal.trajectory.header.stamp = rospy.Time.now() + rospy.Duration(0.1)
@@ -77,11 +74,8 @@ def move_position(given_string) :
 def move_base(given_string) :
     message = given_string.command
     base_movement = Twist()
-    
-    if 'degrees' in message :
-        time = given_string.value
 
-    elif 'forward' in message :
+    if 'forward' in message :
         base_movement.linear.x = 1
         base_movement.angular.z = 0
         
