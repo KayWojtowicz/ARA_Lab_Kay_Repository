@@ -134,7 +134,7 @@
     var command_topic = new ROSLIB.Topic({
         ros : ros,
         name : '/client_command',
-        messageType : ''
+        messageType : 'client_custom_msgs'
     });//to publish commands while operating
 
     // Subscribers
@@ -151,16 +151,16 @@
     
     clear_msgs = function(){
         var str = new ROSLIB.Message({
-            data: '';
-            time: '';
+            data: '',
+            time: ''
         });
         warning_topic.publish(str);
     }
 
     publish_msgs = function(msg){
         var str= new ROSLIB.Message({
-            data: String(msg);
-            time: Int32();
+            command: String(msg),
+            value: Int32()
         });
         command_topic.publish(str);
     }
@@ -221,7 +221,7 @@
 
     <!-------------------------------------------------------------------------------------------------------------------------------------------->
         
-        <h3 style="text-align: center; color: black"> Basic Driving Controls</h3>
+        <h3 style="text-align: center; color: black"> Driving Controls</h3>
         <div class="center" style="background-color: rgb(148, 11, 114)">
             <button type="button" class="buttondesign" onclick="publish_msgs('drive base forward')">Forward</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('drive base backwards')">Backwards</button>
@@ -231,7 +231,7 @@
     
     <!-------------------------------------------------------------------------------------------------------------------------------------------->
 
-        <h3 style="text-align: center; color: black">Basic Arm Controls</h3>
+        <h3 style="text-align: center; color: black">Arm Controls</h3>
         <div class="center" style="background-color: rgb(121, 6, 92)">
             <button type="button" class="buttondesign" onclick="publish_msgs('move lift upwards')">Move Lift Up</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('move lift downwards')">Move Lift Down</button>
@@ -241,22 +241,28 @@
 
     <!-------------------------------------------------------------------------------------------------------------------------------------------->
 
-        <h3 style="text-align: center; color: black">Basic Wrist Controls</h3>
+        <h3 style="text-align: center; color: black">Wrist and Gripper Controls</h3>
         <div class="center" style="background-color: rgb(110, 6, 84)">
             <button type="button" class="buttondesign" onclick="publish_msgs('rotate wrist left')">Rotate Left</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('rotate wrist right')">Rotate Right</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('make gripper open')">Open Gripper</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Close Gripper</button>
         </div>
-    
+
+        <div class="center" style="background-color: rgb(110, 6, 84)">
+            <button type="button" class="buttondesign" onclick="publish_msgs('rotate gripper left')">Rotate Gripper Left</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('rotate gripper right')">Rotate Gripper Right</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Tilt Gripper Up</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Tilt Gripper Down</button>
+        </div>
     <!-------------------------------------------------------------------------------------------------------------------------------------------->
 
-        <h3 style="text-align: center; color: black">Basic Arm Positions</h3>
+        <h3 style="text-align: center; color: black">Arm Positions</h3>
         <div class="center" style="background-color: rgb(83,5,63)">
             <button type="button" class="buttondesign" onclick="publish_msgs('arm to stow position')">Stow</button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('arm to home position')">Home</button>
+            <!--<button type="button" class="buttondesign" onclick="publish_msgs('arm to home position')">Home</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('arm to grasping position')">Grasping</button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('arm to travel position')">Travel</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('arm to travel position')">Travel</button> -->
         </div>
 
     </div>
@@ -288,8 +294,8 @@
         </div>
 
         <div class="center" style="background-color: rgb(148, 11, 114)">
-            <button type="button" class="buttondesign" onclick="publish_msgs('drive base forward one foot')">Forward 1 Meter</button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('drive base backwards one foot')">Back 1 Meter</button>
+            <!--<button type="button" class="buttondesign" onclick="publish_msgs('drive base forward one foot')">Forward 1 Meter</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('drive base backwards one foot')">Back 1 Meter</button>-->
             <button type="button" class="buttondesign" onclick="publish_msgs('turn base left ninety degrees')">Turn Left 90 Degrees</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('turn base right ninesty degrees')">Turn Right 90 Degrees</button>
         </div>
@@ -303,12 +309,19 @@
             <button type="button" class="buttondesign" onclick=" publish_msgs('make arm extend')">Extend Arm</button>
             <button type="button" class="buttondesign" onclick=" publish_msgs('make arm collapse')">Collapse Arm</button>
         </div>
- 
-        <div class="center" style="background-color: rgb(110, 6, 84)">
-            <button type="button" class="buttondesign" onclick="publish_msgs('rotate wrist left')">Rotate Left</button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('rotate wrist right')">Rotate Right</button>
+
+        <div class="center" style="background-color: rgb(121, 6, 92)">
+            <button type="button" class="buttondesign" onclick="publish_msgs('rotate wrist left')">Rotate Wrist Left</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('rotate wrist right')">Rotate Wrist Right</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('make gripper open')">Open Gripper</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Close Gripper</button>
+        </div>
+
+        <div class="center" style="background-color: rgb(110, 6, 84)">
+            <button type="button" class="buttondesign" onclick="publish_msgs('rotate gripper left')">Rotate Gripper Left</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('rotate gripper right')">Rotate Gripper Right</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Tilt Gripper Up</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Tilt Gripper Down</button>
         </div>
 
     <!-------------------------------------------------------------------------------------------------------------------------------------------->
@@ -316,9 +329,6 @@
         <h3 style="text-align: center; color: black">Basic Arm Positions</h3>
         <div class="center" style="background-color: rgb(83,5,63)">
             <button type="button" class="buttondesign" onclick="publish_msgs('arm to stow position')">Stow</button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('arm to home position')"></button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('home position')"></button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('home position')"></button>
         </div>
 
     </div>

@@ -13,6 +13,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 from sensor_msgs.msg import JointState
 
 state = None
+
 #####################################################################################
 
 def joint_states_callback(joint_state_msg) :
@@ -73,6 +74,8 @@ def move_position(given_string) :
 
 def move_base(given_string) :
     message = given_string.command
+    value = given_string.value
+    counter = 0
     base_movement = Twist()
 
     if 'forward' in message :
@@ -90,7 +93,12 @@ def move_base(given_string) :
     elif 'right' in message :
         base_movement.linear.x = 0
         base_movement.angular.z = -1
-    
+        if value > 0 :
+            while counter > value :
+                base_pub.publish(base_movement)
+                counter = counter + 1
+                break    
+        
     base_pub.publish(base_movement)
 
 #####################################################################################
@@ -169,15 +177,17 @@ def send_command(endclient, command) :
             point.positions = [new_value]
         elif joint_name in ["wrist_extension"]:
                 trajectory_goal.trajectory.joint_names = ['joint_arm_l0','joint_arm_l1', 'joint_arm_l2', 'joint_arm_l3']
-            positions = []
-            for j_name in trajectory_goal.trajectory.joint_names:
-                joint_index = joint_state.name.index(j_name)
-                joint_value = joint_state.position[joint_index]
-                delta = command['delta']
-                new_value = joint_value + delta/len(trajectory_goal.trajectory.joint_names)
-                positions.append(new_value)
             
-            point.positions = positions
+        positions = []
+
+        for j_name in trajectory_goal.trajectory.joint_names:
+            joint_index = joint_state.name.index(j_name)
+            joint_value = joint_state.position[joint_index]
+            delta = command['delta']
+            new_value = joint_value + delta/len(trajectory_goal.trajectory.joint_names)
+            positions.append(new_value)
+            
+        point.positions = positions
 
         trajectory_goal.trajectory.points = [point]
         trajectory_goal.trajectory.header.stamp = rospy.Time.now() + rospy.Duration(0.1)

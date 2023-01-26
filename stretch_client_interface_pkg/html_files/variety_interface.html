@@ -189,7 +189,7 @@
     var command_topic = new ROSLIB.Topic({
         ros : ros,
         name : '/client_command',
-        messageType : 'std_msgs/String'
+        messageType : 'client_custom_msgs'
     });//to publish commands while operating
     
     var warning_topic = new ROSLIB.Topic({
