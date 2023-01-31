@@ -128,13 +128,13 @@
     var warning_topic = new ROSLIB.Topic({
         ros : ros,
         name : '/client_warning',
-        messageType : ''
+        messageType : 'std_msgs/String'
     });//to publish warnings while operating
 
     var command_topic = new ROSLIB.Topic({
         ros : ros,
         name : '/client_command',
-        messageType : 'client_custom_msgs'
+        messageType : 'std_msgs/String'
     });//to publish commands while operating
 
     // Subscribers
@@ -151,16 +151,14 @@
     
     clear_msgs = function(){
         var str = new ROSLIB.Message({
-            data: '',
-            time: ''
+            data: ''
         });
         warning_topic.publish(str);
     }
 
     publish_msgs = function(msg){
         var str= new ROSLIB.Message({
-            command: String(msg),
-            value: Int32()
+            data:  String(msg)
         });
         command_topic.publish(str);
     }
@@ -249,12 +247,12 @@
             <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Close Gripper</button>
         </div>
 
-        <div class="center" style="background-color: rgb(110, 6, 84)">
+        <!--<div class="center" style="background-color: rgb(110, 6, 84)">
             <button type="button" class="buttondesign" onclick="publish_msgs('rotate gripper left')">Rotate Gripper Left</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('rotate gripper right')">Rotate Gripper Right</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Tilt Gripper Up</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Tilt Gripper Down</button>
-        </div>
+        </div>-->
     <!-------------------------------------------------------------------------------------------------------------------------------------------->
 
         <h3 style="text-align: center; color: black">Arm Positions</h3>
@@ -294,10 +292,8 @@
         </div>
 
         <div class="center" style="background-color: rgb(148, 11, 114)">
-            <!--<button type="button" class="buttondesign" onclick="publish_msgs('drive base forward one foot')">Forward 1 Meter</button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('drive base backwards one foot')">Back 1 Meter</button>-->
             <button type="button" class="buttondesign" onclick="publish_msgs('turn base left ninety degrees')">Turn Left 90 Degrees</button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('turn base right ninesty degrees')">Turn Right 90 Degrees</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('turn base right ninety degrees')">Turn Right 90 Degrees</button>
         </div>
 
     <!-------------------------------------------------------------------------------------------------------------------------------------------->
@@ -320,8 +316,8 @@
         <div class="center" style="background-color: rgb(110, 6, 84)">
             <button type="button" class="buttondesign" onclick="publish_msgs('rotate gripper left')">Rotate Gripper Left</button>
             <button type="button" class="buttondesign" onclick="publish_msgs('rotate gripper right')">Rotate Gripper Right</button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Tilt Gripper Up</button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Tilt Gripper Down</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('tilt gripper up')">Tilt Gripper Up</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('tilt gripper down')">Tilt Gripper Down</button>
         </div>
 
     <!-------------------------------------------------------------------------------------------------------------------------------------------->

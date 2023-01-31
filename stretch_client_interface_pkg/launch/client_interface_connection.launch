@@ -14,12 +14,12 @@
 	  <param name="/rosbridge_websocket/port" value="2022" />
 
   <!-- COLLISION PREVENTION CLIENT -->
-  <node pkg="stretch_client_interface_pkg" type="prevention_client_client_interface_application.py" name="prevention_client_client_server_application_node" output="screen">
+  <!--<node pkg="stretch_client_interface_pkg" type="prevention_client_client_interface_application.py" name="prevention_client_client_server_application_node" output="screen">
     
     <remap from="/laser_scan" to="$(arg laser_topic)" />
     <remap from="/cmd_vel" to="$(arg twist_topic)" />
 
-  </node>
+  </node>-->
 
   <!-- COLLISION PREVENTION SERVICE-->
   <node pkg="stretch_client_interface_pkg" type="prevention_server_client_interface_application.py" name="prevention_server_client_interface_application_node" output="screen">
