@@ -20,5 +20,3 @@ There is a python shell file for a client and a server that can be adjusted base
 Using the current server the teleop twist python file provided by hello_robot was adjusted to help with collision prevention.
 
 All default topics are for stretch robot in gazebo!
-
-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
