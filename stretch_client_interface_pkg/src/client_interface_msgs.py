@@ -2,10 +2,12 @@
 
 import rospy
 import math
+import time
 from std_msgs.msg import * # imports all std_msgs
 from geometry_msgs.msg import Twist # needed to move the base
 # from client_custom_msgs.msg import * # imports everything from the custom msgs created
-import stretch_body.robot
+import stretch_body.robot as robot
+import os
 
 import actionlib
 
@@ -15,6 +17,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 from sensor_msgs.msg import JointState
 
 state = None
+#robot= stretch_body.robot.Robot()
 
 #####################################################################################
 
@@ -52,28 +55,28 @@ def move_position(message) :
     
     if 'arm' in message:
         if 'stow' in message :
-            robot.startup
+            os.system("rosservice call /stow_the_robot")
+#            time.sleep(5)
+#            robot.arm.move_to(0)
+#            robot.lift.move_to(0.2)
+#            robot.end_of_arm.move_to('wrist_yaw',0)
+#            robot.end_of_arm.move_to('wrist_pitch',0)
+#            robot.end_of_arm.move_to('wrist_roll',0)
+#            robot.push_command()
+#            time.sleep(5)
 
-            robot.arm.move_to(0)
-            robot.lift.move_to(0.2)
-            robot.end_of_arm.move_to('wrist_yaw',0)
-            robot.end_of_arm.move_to('wrist_pitch',0)
-            robot.end_of_arm.move_to('wrist_roll',0)
-            robot.send_command()
-            robot.sleep(5)
-
-            robot.stop()
+            
 
         elif 'grasping' in message :
-            robot.startup
+            robot.startup()
 
             robot.arm.move_to(0)
             robot.lift.move_to(0.2)
             robot.end_of_arm.move_to('wrist_yaw',0)
             robot.end_of_arm.move_to('wrist_pitch',0)
             robot.end_of_arm.move_to('wrist_roll',0)
-            robot.send_command()
-            robot.sleep(5)
+            robot.push_command()
+            time.sleep(5)
 
             robot.stop()
 
@@ -88,22 +91,22 @@ def move_base(message) :
             rad = 90 * (math.pi)/180
 
         if 'left' in message:
-            robot.startup
+            robot.startup()
 
             robot.base.rotate_by(rad)
-            robot.send_command()
+            robot.push_command()
             robot.sleep(2)
 
             robot.stop()
 
         if 'right' in message:
-            robot.startup
+            robot.startup()
 
             robot.base.rotate_by(-rad)
-            robot.send_command()
+            robot.push_command()
             robot.sleep(2)
 
-            robot.stop
+            robot.stop()
 
     elif 'forward' in message :
         base_movement.linear.x = 1
@@ -161,16 +164,16 @@ def move_gripper(message) :
     elif 'close' in message :
         command = {'joint': 'joint_gripper_finger_right', 'delta': -0.1}
     
-    if 'rotate' in message :
+    elif 'rotate' in message :
         if 'right' in message:
             command = {'joint': 'joint_wrist_roll', 'delta': 0.1}
-        if 'left' in message:
+        elif 'left' in message:
             command = {'joint': 'joint_wrist_roll', 'delta': -0.1}
     
-    if 'tilt' in message:
-        if 'right' in message:
+    elif 'tilt' in message:
+        if 'up' in message:
             command = {'joint': 'joint_wrist_pitch', 'delta': 0.1}
-        if 'left' in message:
+        elif 'down' in message:
             command = {'joint': 'joint_wrist_pitch', 'delta': -0.1}
 
     send_command(endclient, command)
@@ -202,7 +205,7 @@ def send_command(endclient, command) :
             
         joint_name = command['joint']
 
-        if joint_name in ['joint_lift', 'joint_wrist_yaw', 'joint_head_pan', 'joint_head_tilt']:
+        if joint_name in ['joint_lift', 'joint_wrist_yaw', 'joint_head_pan', 'joint_head_tilt', 'joint_wrist_roll', 'joint_wrist_pitch', 'joint_gripper_finger_right']:
             trajectory_goal.trajectory.joint_names = [joint_name]
             joint_index = joint_state.name.index(joint_name)
             joint_value = joint_state.position[joint_index]
@@ -233,8 +236,7 @@ def send_command(endclient, command) :
 if __name__ == "__main__":
     rospy.init_node('client_interface_msgs_node') #initializes server node
     
-    robot=stretch_body.robot.Robot()
-
+    
     command = None
     
     base_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10) #publishes to stretch base
@@ -244,5 +246,7 @@ if __name__ == "__main__":
     arm_trajectoryClient = actionlib.ActionClient('/arm_AC', FollowJointTrajectoryAction) #allows for goals to be sent to the arm
     gripper_trajectoryClient = actionlib.ActionClient('/gripper_AC', FollowJointTrajectoryAction) #allows for goals to be sent to the gripper
     #base_trajectoryClient = actionlib.ActionClient('/base_AC', FollowJointTrajectoryAction) #allows for goals to be sent to the base
+    
+    os.system("rosservice call /switch_to_navigation_mode \"{}\"")
 
     rospy.spin()
