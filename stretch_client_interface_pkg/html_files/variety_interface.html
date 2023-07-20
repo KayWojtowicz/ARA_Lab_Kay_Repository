@@ -156,14 +156,14 @@
   
 <meta charset="utf-8" />
 
-<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/eventemitter2@6/lib/eventemitter2.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.7.3/nipplejs.js"></script>
 
 <!-- Connect to ROS -->
 <script type="text/javascript">
 
     var ros = new ROSLIB.Ros({
-    url : 'ws://localhost:2022'
+    url : 'ws://192.168.10.3:2022'
     });
 
     ros.on('connection', function() {
@@ -182,7 +182,7 @@
 
     var cmd_vel_topic = new ROSLIB.Topic({
     ros : ros,
-    name : "/stretch_diff_drive_controller/cmd_vel",
+    name : "/stretch/cmd_vel",
     messageType : 'geometry_msgs/Twist'
     });//needed for joystick
 
@@ -316,8 +316,12 @@
 
         <h3 style="text-align: center; color: black">Gripper Controls</h3>
         <div class="center" style="background-color: rgb(83,5,63)">
-            <button type="button" class="buttondesign" onclick="publish_msgs('make gripper open')">Open Gripper</button>
-            <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Close Gripper</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('make gripper open')">Open</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('make gripper close')">Close</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('rotate gripper left')">Rotate Left</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('rotate gripper right')">Rotate Right</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('tilt gripper up')">Tilt Up</button>
+            <button type="button" class="buttondesign" onclick="publish_msgs('tilt gripper down')">Tilt Down</button>
         </div>
     </div>
 

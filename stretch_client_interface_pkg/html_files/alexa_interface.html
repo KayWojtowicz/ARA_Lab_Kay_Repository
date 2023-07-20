@@ -99,12 +99,12 @@
   
 <meta charset="utf-8" />
 
-<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/eventemitter2@6/lib/eventemitter2.min.js"></script>
 
 <script type="text/javascript">
 
     var ros = new ROSLIB.Ros({
-    url : 'ws://localhost:2022'
+    url : 'ws://192.168.10.3:2022'
     });
 
     ros.on('connection', function() {
